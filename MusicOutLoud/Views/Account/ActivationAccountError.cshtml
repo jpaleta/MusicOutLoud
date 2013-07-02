@@ -1,0 +1,28 @@
+﻿@using DataDomainEntities
+@model DataDomainEntities.User
+
+@{
+    ViewBag.Title = "Activation Account Error";
+}
+
+    <h2>Activation Account</h2>
+
+
+<br />
+@if (ViewBag.SendMailError != null) 
+{
+    <span>@ViewBag.SendMailError</span> 
+}
+else
+{
+   <p>
+        The user account is not valid. Please try clicking the link in your e-mail again.
+    </p>
+    <p>
+        If you haven't received the e-mail or want to resend it, please @Html.ActionLink("click here", "SendMail", "Account", new { id = Model.Uid}, new { target="_self", name="summary" }) .
+    </p> 
+}
+
+
+
+

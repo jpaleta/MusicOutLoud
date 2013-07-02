@@ -1,0 +1,254 @@
+﻿@using DataDomainEntities;
+@*@model DataDomainEntities.PlayList*@
+@model Tuple<IEnumerable<User>, User, PlayList>
+
+@{
+    ViewBag.Title = "PlayList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hgroup class="title">
+    <h1>PlayList "<i>@Model.Item3.Name"</i></h1>
+    @if(@Model.Item3.Description != null)
+    {
+        <h2> - @Model.Item3.Description.</h2>
+    }
+</hgroup>
+
+
+
+@if (Model.Item3.Owner == User.Identity.Name || Model.Item2.GetPermition(Model.Item3) == Permition.Writer)
+{
+    <hr />
+    <h4> Add or Change the playlist description:</h4>
+    using (Html.BeginForm("Description", "PlayList"))
+    {
+         @Html.Hidden("id", Model.Item3.Id)
+         @Html.TextBox("newDescription")
+         <input class="btn_submit" type="submit" value="Add/Change" />
+    }
+    <hr />
+}
+
+
+
+
+@if (Model.Item3.Owner == User.Identity.Name)
+{
+    if (!Model.Item3.toShare)
+    {
+        using (Html.BeginForm("SharePlayList", "Playlist"))
+        {
+            <div>
+                @Html.Hidden("id", Model.Item3.Id)
+                <div>
+                    <br />
+                    <p><input class="btn_submit" type="submit" value="Make this playlist shareable" /></p>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        if (Model.Item1.Count() > 1)
+        {
+            using (Html.BeginForm("UpdateUsersSharingPlayList", "Playlist"))
+            {
+                <div>
+                    <br />
+                    <h2>Change Users permissions :</h2>
+                    <hr />
+                        <br />
+                        @foreach (User u in Model.Item1)
+                        {
+                            if (u.Uid != Model.Item2.Uid)
+                            {
+                                <div>
+                                    <strong><p>@u.Nickname <i>(@u.GetPermition(Model.Item3))</i></p></strong>
+                                    <p>Change @u.Nickname permitions on @Model.Item3.Name: </p>@Html.DropDownListFor(model => model.Item2.permition, new SelectList(Enum.GetValues(typeof(DataDomainEntities.Permition))))
+                                    <hr />
+                                </div>
+                            }
+
+                        }
+
+                        <div>
+                            @Html.Hidden("id", Model.Item3.Id)
+                            @Html.Hidden("users", Model.Item1)
+                            <div>
+                                <br />
+                                <p><input class="btn_submit" type="submit" value="Update user permissions" /></p>
+                                <hr />
+                            </div>
+                        </div>
+                    
+                </div>
+            }
+        }
+        else
+        {
+            <p>There are no users to share playlists with!</p>
+        }
+        using (Html.BeginForm("CancelSharingPlayList", "PlayList"))
+        {
+            <div>
+                @Html.Hidden("id", Model.Item3.Id)
+                <div>
+                    <p><input class="btn_submit" type="submit" value="Make playlist unshareable" /></p>
+                    <br />
+                </div>
+            </div>
+    
+        }
+    }
+    <hr />
+
+}
+
+
+
+
+@if (Model.Item3.Lists != null)
+{
+    if (Model.Item3.Lists.Count != 0)
+    { 
+        <h3>@Model.Item3.Lists.Count music(s)</h3>
+    }
+}
+
+
+<br />
+
+@if (Model.Item3.Lists != null)
+{
+    if (Model.Item3.Lists.Count > 0)
+    { 
+        
+        <table>
+            @{int count = 1;}
+            @foreach (Music m in Model.Item3.Lists)
+            {
+                 <tr>
+                     <td>
+                        @count. @m.Name (<i>@m.Length seconds</i>) - @m.Artist, @m.album.Name, @m.album.Year
+                         @{count++;}
+                    </td>
+                     
+                     @if (Model.Item3.Owner == User.Identity.Name || Model.Item2.GetPermition(Model.Item3) == Permition.Writer)
+                     { 
+                     <td>
+                        <a class="del" href=@Url.Action("MoveUp", "PlayList", new { musicId = @m.Id, id = Model.Item3.Id })> 
+                           <img style="height: 22px; padding-left: 100%; border:none" src="~/Content/images/move_up.png" title="Move music up" />
+                        </a>
+                     </td>
+                     <td>
+                        <a class="del" href=@Url.Action("MoveDown", "PlayList", new { musicId = @m.Id, id = Model.Item3.Id }) > 
+                           <img style="height: 22px; margin-right: 2%; border:none" src="~/Content/images/move_down.png" title="Move music down" />
+                        </a>
+                     </td>   
+                     <td>
+                        <a class="del" href=@Url.Action("Delete", "PlayList", new { musicId = @m.Id, id = Model.Item3.Id }) onclick="return confirm('Are you sure you want to delete this music from the current playlist?');"> 
+                           <img style="height: 22px; padding-left: 20%; border:none" src="~/Content/images/delete.png" title="Delete music" />
+                            @*x*@
+                        </a>
+                     </td>
+                     <td>
+                        @using (Html.BeginForm("MoveToList", "PlayList"))
+                        {   
+                            <div style="width:200px;">
+                           @Html.DropDownList("PlayList_list")
+                           @Html.Hidden("id", Model.Item3.Id)
+                           @Html.Hidden("musicId", @m.Id)       
+                           <input class="btn_updown" type="submit" value="Send to List" onclick="return confirm('Are you sure you want to send this music to the selected playlist?');"/>
+                            </div>
+                        }
+                     </td>
+
+                     }
+                 </tr>
+            }   
+        </table>
+    }
+    else
+    {
+        if (Model.Item3.Owner == User.Identity.Name || Model.Item2.GetPermition(Model.Item3) == Permition.Writer)
+        {
+            <span>
+                <i>Please add some music to this playlist!</i>
+                <br />
+            </span>
+        }
+        else
+        {
+            <span>
+                <i>No music(s) added to this playlist!</i>
+                <br />
+            </span>
+        }
+    }
+}
+else
+{
+    if (Model.Item3.Owner == User.Identity.Name || Model.Item2.GetPermition(Model.Item3) == Permition.Writer)
+    {
+        <span>
+            <i>Please add some music to this playlist!</i>
+            <br />
+        </span>
+    }
+    else
+    {
+        <span>
+            <i>No music(s) added to this playlist!</i>
+            <br />
+        </span>
+    }
+}
+
+<br />
+
+
+<hr />
+
+@if (Model.Item3.Owner == User.Identity.Name || Model.Item2.GetPermition(Model.Item3) == Permition.Writer)
+{
+
+    using (Html.BeginForm("PlayList", "PlayList"))
+    {
+        @Html.TextBox("searchValue") <input type="submit" value="Search" />
+        @Html.Hidden("id", Model.Item3.Id)
+    }
+
+    if (@ViewBag.MusicList != null)
+    {
+    
+        <h2>This is the music list for: <i>"@ViewBag.SearchParameter"</i></h2>
+    <br />
+        if (ViewBag.MusicList.Count == 0)
+        {
+            <p>No results were found!</p> 
+        }
+        else
+        {
+            using (Html.BeginForm("AddMusics", "PlayList"))
+            {
+
+                foreach (Music music in ViewBag.MusicList)
+                {
+                   @Html.CheckBox(music.Name + "#&#" + music.Length + "#&#" + music.Artist + "#&#" + music.album.Name + "#&#" + music.album.Year) <span>@music.Name (<i>@music.Length seconds</i>) - @music.Artist, @music.album.Name, @music.album.Year </span>
+                    <br />
+                }
+            
+                <hr />
+                <input type="submit" value="Add Selected Musics to playlist" /> 
+                @Html.Hidden("id", Model.Item3.Id) 
+            } 
+        }
+    }
+
+}
+
+<br />
+<hr />
+
+<p>@Html.RouteLink("< Back to Homepage" ,new { @controller= "Home", @action = "Index"})</p>

@@ -1,0 +1,79 @@
+﻿@model MusicOutLoud.Models.RegisterModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title.</h1>
+    <h2>Create a new account.</h2>
+</hgroup>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { id = "register_form" }))
+{
+    @Html.AntiForgeryToken()
+    //@Html.ValidationSummary()
+
+    <fieldset>
+        <legend>Registration Form</legend>
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName, new { @id = "userId" })
+               @* @Html.ValidationMessageFor(m => m.UserName)*@
+                <div class="message-error" id="error_user" style="display:none">
+                    * You need to insert a user.
+                </div>
+            </li>
+            <li>
+                @Html.LabelFor(m => m.FullName)
+                @Html.TextBoxFor(m => m.FullName, new { @id = "userName" })
+                @*@Html.ValidationMessageFor(m => m.FullName)*@
+                <div class="message-error" id="error_name" style="display:none">
+                    * You need to insert a name.
+                </div>
+
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @id = "userEmail" })
+                @*@Html.ValidationMessageFor(m => m.Email)*@
+                <div class="message-error" id="error_email" style="display:none">
+                    * You need to insert an email.
+                </div>
+                <div class="message-error" id="error_emailAt" style="display:none">
+                    * Bad email format.
+                </div>
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password, new { @id = "userPass" })
+                @*@Html.ValidationMessageFor(m => m.Password)*@
+                <div class="message-error" id="error_pass" style="display:none">
+                    * You need to insert a password.
+                </div>
+                <div class="message-error" id="error_passLen" style="display:none">
+                    * The password must have at least 6 characters.
+                </div>
+            </li>
+            <li>
+                @Html.LabelFor(m => m.ConfirmPassword)
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @id = "userPass2" })
+                @*@Html.ValidationMessageFor(m => m.ConfirmPassword)*@
+                <div class="message-error" id="error_pass2" style="display:none">
+                    * You need to insert the password for confirmation.
+                </div>
+                <div class="message-error" id="error_passEquals" style="display:none">
+                    * Confirmation error. The passwords must be the equal.
+                </div>
+            </li>
+        </ol>
+        <div style="width: 100px;">
+            @ReCaptcha.GetHtml(publicKey: "6LeCmtkSAAAAAF2psiGJnzqWoM0TYrWwpQQVb-KB", theme: "clean") 
+        </div>
+        <input type="submit" value="Register" />
+    </fieldset>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

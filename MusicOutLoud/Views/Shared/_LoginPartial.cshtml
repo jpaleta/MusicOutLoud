@@ -1,0 +1,35 @@
+﻿@if (Request.IsAuthenticated && Request.CurrentExecutionFilePath != "/Registered/Registered")
+{
+    <text>
+        Hello, @Html.ActionLink(User.Identity.Name, "Profile", "Profile", routeValues: null, htmlAttributes: new { @class = "username", title = "Profile" })!
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        }
+    </text>
+    } else if (Request.IsAuthenticated && Request.CurrentExecutionFilePath == "/Registered/Registered"){
+    FormsAuthentication.SignOut();
+    <ul>
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}
+ else {
+    <ul>
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}
+
+
+@*@if (Request.IsAuthenticated && Request.CurrentExecutionFilePath != "/Registered/Registered")
+{
+    <text>Welcome <strong>@Html.RouteLink(@User.Identity.Name,new { @controller= "Profile", @action = "Profile"})</strong>!
+    [ @Html.ActionLink("Log Off", "LogOff", "Account") ]</text>
+} else if (Request.IsAuthenticated && Request.CurrentExecutionFilePath == "/Registered/Registered"){
+    FormsAuthentication.SignOut();
+    @:[ @Html.ActionLink("Log On", "LogOn", "Account") ]
+}
+else {
+    @:[ @Html.ActionLink("Log On", "LogOn", "Account") ]
+}*@

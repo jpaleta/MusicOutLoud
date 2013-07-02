@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - MusicOutLoud</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        @*<script src="http://code.jquery.com/jquery-1.9.1.js"></script>*@
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        @Scripts.Render("~/bundles/jqueryScripts")
+        @Scripts.Render("~/bundles/autoCompleteScripts")
+
+        
+    </head>
+    <body>
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <a class="logo" href="@Url.RouteUrl(new { controller = "Home", action = "Index" })" >
+                        <img style="height:160px; border:none" src="~/Content/images/mom.png" />     
+                    </a>
+                    @*<p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>*@
+                </div>
+                <div class="float-right">
+                    <section id="login">
+                        @Html.Partial("_LoginPartial")
+                    </section>
+                    <nav>
+                        <ul id="menu">
+                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("About", "About", "Home")</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+            @RenderSection("featured", required: false)
+            <section class="content-wrapper main-content clear-fix">
+                @RenderBody()
+            </section>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; @DateTime.Now.Year - MusicOutLoud™, All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        @*@Scripts.Render("~/bundles/jquery")*@
+       @*@Scripts.Render("~/bundles/jqueryScripts")*@
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

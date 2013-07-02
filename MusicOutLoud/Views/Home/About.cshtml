@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+
+<hgroup class="title">
+    <h1>@ViewBag.Title.</h1>
+    <h2>Thank you for helping our cause!</h2>
+</hgroup>
+
+<article>
+    <p>
+        This is a very useful web application and we continue to develop it thanks to you.
+    </p>
+    <p>
+        Spread the word and make us grow more and more!
+    </p>
+    <p>
+        Be confortable to help us with your suggestions. We improve thanks to your help. Don't be scared to contact us!
+        We would love to hear from you.
+    </p>
+</article>
+
+<aside>
+    <h3>You make us proud!</h3>
+    <p>
+        We would like to thank you for using MusicOutLoud.
+    </p>
+    <ul>
+        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+        <li>@Html.ActionLink("About", "About", "Home")</li>
+        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+    </ul>
+</aside>

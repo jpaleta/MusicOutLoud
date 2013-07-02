@@ -1,0 +1,126 @@
+﻿
+@using DataDomainEntities
+@using MusicOutLoud.Models
+@*@model DataDomainEntities.User
+*@
+@model Tuple<IEnumerable<User>, User>
+
+@{
+    ViewBag.Title = @User.Identity.Name + " Profile";
+}
+
+
+<h2>@User.Identity.Name Profile</h2>
+
+<br />
+
+                    
+@if (string.IsNullOrEmpty(Model.Item2.Photo)) {                       
+                        @* @:None*@                    
+}                   
+else { 
+                          @*<img width="150" height="150" alt="Item Image" src="../Content/images/" + @Model.Item2.Photo />*@
+               
+    @MvcHtmlString.Create("<img src='" + "../Content/images/" + @Model.Item2.Photo + "'" + "alt='' width='150px' height='150px'/>")
+}
+
+<p><strong>Name: </strong>@Model.Item2.Nome</p>
+<p><strong>E-Mail: </strong>@Model.Item2.Email</p>
+<p>@Html.ActionLink("Change your password", "ChangePassword", "Profile")</p>
+<br />
+
+<hr />
+
+@using (Html.BeginForm("AddImage", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" })) 
+{ 
+    @Html.Hidden("UserId", Model.Item2.Uid)
+    
+    <h2>Add/Change your profile picture</h2>
+    <br />
+    <div >Upload new image: <input id="image" type="file" name="image" /></div>
+    <input class="btn_submit" type="submit" value="Upload Photo" />
+}
+
+<hr />
+
+
+@if(Model.Item1 != null)
+{
+    if (Model.Item1.FirstOrDefault() != null && Model.Item2.role == 0)
+    {
+        <br />
+        <h2>Existing Users in MusicOutLoud:</h2>
+
+        <hr />
+        
+            int count=1;
+            foreach (User u in Model.Item1)
+            {
+                if (u.Uid != Model.Item2.Uid && u.Nickname != "Administrator")
+                {
+                    
+                            <br />
+                            <h3>@count. @u.Nickname  (@u.role)</h3>
+                            count++;
+                            <br /> 
+                            using (Html.BeginForm("ChangeRole", "Profile"))
+                            {
+                                <br />
+                                @Html.Hidden("userId", u.Uid)
+                                <span><strong>@u.Nickname</strong> current role is "<i>@u.role</i>".</span>
+                                <br />
+                                <span>Change @u.Nickname role: </span>
+                                 @Html.DropDownListFor(model => model.Item2.role, new SelectList(Enum.GetValues(typeof(DataDomainEntities.Role))),new {@onchange="this.form.submit();"})
+                            }
+                
+                            <br /> 
+                            using (Html.BeginForm("DeleteUser", "Profile"))
+                            {
+                                <div>
+                                    @Html.Hidden("userId", u.Uid)
+                            
+                                    <div>
+                                        <input class="btn_delete" type="submit" value="Delete this user" />
+                                    </div>
+                                </div>
+                            }
+                            
+                            if(@count != Model.Item1.Count()){
+                                <hr />
+                            }   
+
+            }
+            else
+            {
+                    if(User.Identity.Name == "Administrator" && Model.Item1.Count() < 2){
+                        <br />
+                        <span> <i>There are no MusicOutLoud users except you!</i></span>
+                        <br />
+                    }
+            }
+        
+        }
+        <br />
+        <hr />
+    }
+}
+
+@*@if(Model.Item2.role != 0){*@
+
+
+
+<br />
+    @using (Html.BeginForm("DeleteAccount", "Profile"))
+    {
+        <div>
+            @Html.Hidden("userId", Model.Item2.Uid)
+                            
+            <div>
+                <p><input class="btn_delete" type="submit" value="Delete Your Account" /></p>
+            </div>
+        </div>
+    }
+                  
+
+<p>@Html.RouteLink("< Back to Homepage" ,new { @controller= "Home", @action = "Index"})</p>
+
